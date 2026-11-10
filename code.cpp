@@ -1,33 +1,33 @@
-#include "DxLib.h"
+ï»¿#include "DxLib.h"
 #include <iostream>
 #include <string>
 #include <time.h>
 using namespace std;
 
-int Key[256]; // Å°°¡ ´­·¯Áø ÇÁ·¹ÀÓ ¼ö¸¦ ÀúÀåÇÑ´Ù
+int Key[256]; // í‚¤ê°€ ëˆŒëŸ¬ì§„ í”„ë ˆì„ ìˆ˜ë¥¼ ì €ì¥í•œë‹¤
 
 int gpUpdateKey() {
-    char tmpKey[256]; // ÇöÀç Å°ÀÇ ÀÔ·Â »óÅÂ ÀúÀå
-    GetHitKeyStateAll(tmpKey); // ¸ğµç Å°ÀÇ ÀÔ·Â »óÅÂ¸¦ ¾ò´Â´Ù.
+    char tmpKey[256]; // í˜„ì¬ í‚¤ì˜ ì…ë ¥ ìƒíƒœ ì €ì¥
+    GetHitKeyStateAll(tmpKey); // ëª¨ë“  í‚¤ì˜ ì…ë ¥ ìƒíƒœë¥¼ ì–»ëŠ”ë‹¤.
     for (int i = 0; i < 256; i++) {
-        if (tmpKey[i] != 0) { // i¹øÀÇ Å°ÄÚµå¿¡ ´ëÀÀÇÏ´Â Å°¸¦ ´©¸£°í ÀÖÀ¸¸é
-            Key[i]++; // ´õÇÏ±â
+        if (tmpKey[i] != 0) { // ië²ˆì˜ í‚¤ì½”ë“œì— ëŒ€ì‘í•˜ëŠ” í‚¤ë¥¼ ëˆ„ë¥´ê³  ìˆìœ¼ë©´
+            Key[i]++; // ë”í•˜ê¸°
         }
-        else { // ´©¸£Áö ¾ÊÀ¸¸é
-            Key[i] = 0; // 0À¸·Î ¼³Á¤
+        else { // ëˆ„ë¥´ì§€ ì•Šìœ¼ë©´
+            Key[i] = 0; // 0ìœ¼ë¡œ ì„¤ì •
         }
     }
     return 0;
-}// °¡Á®¿Â ÄÚµå
+}// ê°€ì ¸ì˜¨ ì½”ë“œ
 
 void long_writing_practice(string a) {
     char input[128];
     int textstream;
     int wrong_count = 0;
-    float accuracy = 0;//Á¤È®µµ¸¦ ±¸ÇÏ´Âµ¥ ÇÊ¿äÇÑ º¯¼ö
+    float accuracy = 0;//ì •í™•ë„ë¥¼ êµ¬í•˜ëŠ”ë° í•„ìš”í•œ ë³€ìˆ˜
     char text[128];
     char a2[128];
-    char type_per_min2[128];//2 ºÙÀº °ÍµéÀº Ãâ·ÂÀ» À§ÇØ ÀÚ·áÇüÀ» º¯È¯½ÃÄÑÁØ °Íµé
+    char type_per_min2[128];//2 ë¶™ì€ ê²ƒë“¤ì€ ì¶œë ¥ì„ ìœ„í•´ ìë£Œí˜•ì„ ë³€í™˜ì‹œì¼œì¤€ ê²ƒë“¤
     char real_accuracy2[128];
     float real_accuracy;
     double type_per_min;
@@ -35,16 +35,16 @@ void long_writing_practice(string a) {
     for (int i = 0; i < a.size(); i++) {
         a2[i] = a[i];
     }
-    a2[a.size() + 1] = '\0';//a¸¦ char[] Çü½ÄÀ¸·Î º¯È¯
+    a2[a.size() + 1] = '\0';//aë¥¼ char[] í˜•ì‹ìœ¼ë¡œ ë³€í™˜
     textstream = FileRead_open(a2);
     time_t start, end;
     start = time(NULL);
-    int Wy = 0;//¹®ÀåµéÀÌ Ãâ·ÂµÇ´Â À§Ä¡¸¦ Á¶Á¤ÇÏ´Â º¯¼ö(y°ª)
-    int roof = 0;//È­¸é ¹ÛÀ¸·Î ³Ñ¾î°¡´Â°É ¹æÁö
-    int next = 0;//ÇÑ È­¸éÀÌ ³¡³­ µÚ °è¼ÓÇÒÁö¸¦ Á¤ÇÏ´Â º¯¼ö
-    while (FileRead_eof(textstream) == 0) {//ÇÑÁÙ¾¿ ÀĞ¾îÁÖ±â
+    int Wy = 0;//ë¬¸ì¥ë“¤ì´ ì¶œë ¥ë˜ëŠ” ìœ„ì¹˜ë¥¼ ì¡°ì •í•˜ëŠ” ë³€ìˆ˜(yê°’)
+    int roof = 0;//í™”ë©´ ë°–ìœ¼ë¡œ ë„˜ì–´ê°€ëŠ”ê±¸ ë°©ì§€
+    int next = 0;//í•œ í™”ë©´ì´ ëë‚œ ë’¤ ê³„ì†í• ì§€ë¥¼ ì •í•˜ëŠ” ë³€ìˆ˜
+    while (FileRead_eof(textstream) == 0) {//í•œì¤„ì”© ì½ì–´ì£¼ê¸°
         FileRead_gets(text, 256, textstream);
-        if (roof == 23) {//¹®ÀåÀÌ È­¸é ¹ÛÀ¸·Î ³ª°¡Áö ¾Êµµ·Ï Á¦¾îÇØÁÖ´Â Á¶°Ç¹®ÀÌÀÚ È­¸éÀÇ ³¡¿¡ µµ´ŞÇßÀ»¶§ °á°úÃ¢À» Ãâ·ÂÇØÁÖ´Â Á¶°Ç¹®
+        if (roof == 23) {//ë¬¸ì¥ì´ í™”ë©´ ë°–ìœ¼ë¡œ ë‚˜ê°€ì§€ ì•Šë„ë¡ ì œì–´í•´ì£¼ëŠ” ì¡°ê±´ë¬¸ì´ì í™”ë©´ì˜ ëì— ë„ë‹¬í–ˆì„ë•Œ ê²°ê³¼ì°½ì„ ì¶œë ¥í•´ì£¼ëŠ” ì¡°ê±´ë¬¸
             ClearDrawScreen();
             Wy = 0;
             roof = 0;
@@ -71,12 +71,12 @@ void long_writing_practice(string a) {
                 next = 1;
                 break;
             }
-        }//ÇÑ ÆäÀÌÁö ³¡³µÀ» ¶§
-        DrawString(0, Wy, text, GetColor(255, 255, 255));//½á¾ßµÇ´Â ¹®Àå Ãâ·Â
-        KeyInputString(0, Wy + 20, 300, input, FALSE);//¹®Àå ¾²´Â°Å ÀÔ·Â
+        }//í•œ í˜ì´ì§€ ëë‚¬ì„ ë•Œ
+        DrawString(0, Wy, text, GetColor(255, 255, 255));//ì¨ì•¼ë˜ëŠ” ë¬¸ì¥ ì¶œë ¥
+        KeyInputString(0, Wy + 20, 300, input, FALSE);//ë¬¸ì¥ ì“°ëŠ”ê±° ì…ë ¥
         int size = strlen(text);
         accuracy += size;
-        for (int i = 0; i < size; i++) {//Æ²¸°°è¼ö ¼¼±â
+        for (int i = 0; i < size; i++) {//í‹€ë¦°ê³„ìˆ˜ ì„¸ê¸°
             if (strlen(input) == 0) {
                 wrong_count += strlen(text);
                 DrawString(0, Wy, text, GetColor(255, 51, 51));
@@ -87,12 +87,12 @@ void long_writing_practice(string a) {
                 DrawString(0, Wy, text, GetColor(255, 51, 51));
             }
         }
-        Wy += 20;//ÇÑÁÙ Ãâ·Â ÈÄ ´ÙÀ½ÁÙ·Î ³»¸®±â
+        Wy += 20;//í•œì¤„ ì¶œë ¥ í›„ ë‹¤ìŒì¤„ë¡œ ë‚´ë¦¬ê¸°
         roof++;
     }
     end = time(NULL);
     type_per_min = accuracy * (60 / (double)(end - start));
-    //Å¸ÀÌÇÎ ³¡³­ ½ÃÁ¡ÀÌ´Ï °á°úÃ¢ µµÃâ
+    //íƒ€ì´í•‘ ëë‚œ ì‹œì ì´ë‹ˆ ê²°ê³¼ì°½ ë„ì¶œ
     real_accuracy = ((accuracy - wrong_count) / accuracy) * 100;
     ClearDrawScreen();
     sprintf_s(real_accuracy2, sizeof(real_accuracy2), "%0.2f", real_accuracy);
@@ -106,23 +106,23 @@ void long_writing_practice(string a) {
     if (next == 0) {
         ScreenFlip();
         WaitKey();
-    }//°è¼ÓÇÏ±â ¿øÇÏ¸é ±×´ë·Î ÁøÇàÇÏ°í Á¾·á ¿øÇÏ¸é ¸Ş´ºÈ­¸éÀ¸·Î ³ª°¡±â
+    }//ê³„ì†í•˜ê¸° ì›í•˜ë©´ ê·¸ëŒ€ë¡œ ì§„í–‰í•˜ê³  ì¢…ë£Œ ì›í•˜ë©´ ë©”ë‰´í™”ë©´ìœ¼ë¡œ ë‚˜ê°€ê¸°
     gpUpdateKey();
 }
 void short_writing_practice(string a, int b) {
     char input[128];
     int textstream;
-    char text[25][128];//25¹®Àå, °¢ ¹®Àå´ç 128±ÛÀÚ±îÁö °¡´É
+    char text[25][128];//25ë¬¸ì¥, ê° ë¬¸ì¥ë‹¹ 128ê¸€ìê¹Œì§€ ê°€ëŠ¥
     char a2[128];
     time_t start, end;
-    for (int i = 0; i < a.size(); i++) {//a°ª a2¿¡ º¹»ç(string, char)
+    for (int i = 0; i < a.size(); i++) {//aê°’ a2ì— ë³µì‚¬(string, char)
         a2[i] = a[i];
     }
     a2[a.size() + 1] = '\0';
     textstream = FileRead_open(a2);
     int Wy = 0;
     int s = 0;
-    float accuracy = 0; // Á¤È®µµ ¾Æ´Ô ¹®Àå ÀüÃ¼ °³¼öÀÓ(º¯¼ö¸í¿¡ ¸ÂÁö ¾Ê°Ô »ç¿ëµÊ)
+    float accuracy = 0; // ì •í™•ë„ ì•„ë‹˜ ë¬¸ì¥ ì „ì²´ ê°œìˆ˜ì„(ë³€ìˆ˜ëª…ì— ë§ì§€ ì•Šê²Œ ì‚¬ìš©ë¨)
     float type_per_min;
     while (FileRead_eof(textstream) == 0) {
         FileRead_gets(text[s], 256, textstream);
@@ -131,21 +131,21 @@ void short_writing_practice(string a, int b) {
     }
     accuracy -= 1;
     SRand(b);
-    for (int j = 0; j < 1; j) {//¸ŞÀÎ ½ÇÇà for¹®
+    for (int j = 0; j < 1; j) {//ë©”ì¸ ì‹¤í–‰ forë¬¸
         float wrong_count = 0;
-        int ran = GetRand(accuracy);//·£´ıÀ¸·Î ¹®Àå °í¸£±â
-        DrawString(0, Wy, text[ran], GetColor(255, 255, 255));//½á¾ßµÇ´Â ¹®Àå Ãâ·Â
+        int ran = GetRand(accuracy);//ëœë¤ìœ¼ë¡œ ë¬¸ì¥ ê³ ë¥´ê¸°
+        DrawString(0, Wy, text[ran], GetColor(255, 255, 255));//ì¨ì•¼ë˜ëŠ” ë¬¸ì¥ ì¶œë ¥
         start = time(NULL);
-        KeyInputString(0, Wy + 20, 300, input, FALSE);//¹®Àå ¾²´Â°Å ÀÔ·Â
+        KeyInputString(0, Wy + 20, 300, input, FALSE);//ë¬¸ì¥ ì“°ëŠ”ê±° ì…ë ¥
         int wordsize = strlen(text[ran]);
         for (int i = 0; i < wordsize; i++) {
             if (input[i] != text[ran][i]) {
                 wrong_count++;
             }
         }
-        //Å¸ÀÌÇÎ ³¡³­ ½ÃÁ¡ÀÌ´Ï °á°úÃ¢ µµÃâ
+        //íƒ€ì´í•‘ ëë‚œ ì‹œì ì´ë‹ˆ ê²°ê³¼ì°½ ë„ì¶œ
         end = time(NULL);
-        float real_accuracy = ((wordsize - wrong_count) / wordsize) * 100;//ÁøÂ¥ Á¤È®µµ
+        float real_accuracy = ((wordsize - wrong_count) / wordsize) * 100;//ì§„ì§œ ì •í™•ë„
         type_per_min = strlen(text[ran]) * (60 / (double)(end - start));
         if (strlen(input) == 0) real_accuracy = 0;
         char real_accuracy2[128];
@@ -164,17 +164,17 @@ void short_writing_practice(string a, int b) {
         WaitKey();
         ClearDrawScreen();
         gpUpdateKey();
-        if (Key[KEY_INPUT_ESCAPE] == 1) break;//esc´­·¯¼­ ¸Ş´º·Î ³ª°¡±â
+        if (Key[KEY_INPUT_ESCAPE] == 1) break;//escëˆŒëŸ¬ì„œ ë©”ë‰´ë¡œ ë‚˜ê°€ê¸°
     }
 }
 void word_practice(int a) {
     char input[128];
     int textstream;
     int wrong_count = 0;
-    float accuracy = 0;//ÀüÃ¼ ´Ü¾î °³¼öÀÓ Á¤È®µµ ¾Æ´Ô(º¯¼ö¸í Àß¸ø »ç¿ë)
-    int correct = 0;//ÇöÀç ¸ÂÀº °³¼ö(½ÇÇàÁß Ç¥½ÃÇØÁÖ±â À§ÇÑ)
+    float accuracy = 0;//ì „ì²´ ë‹¨ì–´ ê°œìˆ˜ì„ ì •í™•ë„ ì•„ë‹˜(ë³€ìˆ˜ëª… ì˜ëª» ì‚¬ìš©)
+    int correct = 0;//í˜„ì¬ ë§ì€ ê°œìˆ˜(ì‹¤í–‰ì¤‘ í‘œì‹œí•´ì£¼ê¸° ìœ„í•œ)
     char** text = new char* [250];
-    for (int i = 0; i < 250; i++) text[i] = new char[128];//µ¿Àû ÇÒ´ç ÇØÁÖ±â(250´Ü¾î, °¢°¢128±ÛÀÚ¾¿ °¡´É)
+    for (int i = 0; i < 250; i++) text[i] = new char[128];//ë™ì  í• ë‹¹ í•´ì£¼ê¸°(250ë‹¨ì–´, ê°ê°128ê¸€ìì”© ê°€ëŠ¥)
     textstream = FileRead_open("words.txt");
     int Wy = 0;
     int s = 0;
@@ -195,25 +195,25 @@ void word_practice(int a) {
         SetFontSize(20);
         DrawString(540, 0, correct2, GetColor(255, 255, 51));
         DrawString(550, 0, "/", GetColor(255, 255, 51));
-        DrawString(560, 0, per, GetColor(153, 203, 255));// ÀüÃ¼/¸ÂÀº ´Ü¾î ¿À¸¥ÂÊ À§¿¡ Ãâ·ÂÇÏ±â
+        DrawString(560, 0, per, GetColor(153, 203, 255));// ì „ì²´/ë§ì€ ë‹¨ì–´ ì˜¤ë¥¸ìª½ ìœ„ì— ì¶œë ¥í•˜ê¸°
         SetFontSize(64);
-        DrawString(200, 168, text[ran], GetColor(255, 255, 255));//½á¾ßµÇ´Â ¹®Àå Ãâ·Â
-        KeyInputString(200, 232, 300, input, FALSE);//¹®Àå ¾²´Â°Å ÀÔ·Â
+        DrawString(200, 168, text[ran], GetColor(255, 255, 255));//ì¨ì•¼ë˜ëŠ” ë¬¸ì¥ ì¶œë ¥
+        KeyInputString(200, 232, 300, input, FALSE);//ë¬¸ì¥ ì“°ëŠ”ê±° ì…ë ¥
         ClearDrawScreen();
         int wordsize = strlen(text[ran]);
         int wrong = 0;
-        for (int i = 0; i < wordsize; i++) {//Æ²¸° °³¼ö ¼¼±â(ÇÑ±ÛÀÚ¶óµµ Æ²¸®¸é Æ²¸²)
+        for (int i = 0; i < wordsize; i++) {//í‹€ë¦° ê°œìˆ˜ ì„¸ê¸°(í•œê¸€ìë¼ë„ í‹€ë¦¬ë©´ í‹€ë¦¼)
             if (input[i] != text[ran][i]) {
                 wrong++;
-                break;//Æ²¸°°Å Ã£À¸¸é ¹Ù·Î break
+                break;//í‹€ë¦°ê±° ì°¾ìœ¼ë©´ ë°”ë¡œ break
             }
         }
         if (wrong != 0) wrong_count += 1;
         else correct++;
         Wy += 20;
-    }//¹İº¹ È½¼ö Á¶Àı·Î Á¤È®µµ Ã¼Å©±îÁö °É¸®´Â ¹İº¹¼ö Á¶Àı
-    //Å¸ÀÌÇÎ ³¡³­ ½ÃÁ¡ÀÌ´Ï °á°úÃ¢ µµÃâ
-    float real_accuracy = ((10.0 - wrong_count) / 10) * 100;//10 = ¹İº¹È½¼ö(¼öÁ¤°¡´É)
+    }//ë°˜ë³µ íšŸìˆ˜ ì¡°ì ˆë¡œ ì •í™•ë„ ì²´í¬ê¹Œì§€ ê±¸ë¦¬ëŠ” ë°˜ë³µìˆ˜ ì¡°ì ˆ
+    //íƒ€ì´í•‘ ëë‚œ ì‹œì ì´ë‹ˆ ê²°ê³¼ì°½ ë„ì¶œ
+    float real_accuracy = ((10.0 - wrong_count) / 10) * 100;//10 = ë°˜ë³µíšŸìˆ˜(ìˆ˜ì •ê°€ëŠ¥)
     char real_accuracy2[128];
     char wrong_count2[128];
     ClearDrawScreen();
@@ -230,13 +230,13 @@ void word_practice(int a) {
     WaitKey();
     gpUpdateKey();
     for (int i = 0; i < 250; i++) delete[] text[i];
-    delete[] text;//µ¿Àû ÇÒ´ç ÇØÁ¦
+    delete[] text;//ë™ì  í• ë‹¹ í•´ì œ
 }
 void spot_practice(int a) {
     char spot[36] = { 'q','w','e','r','t','y','u','i','o','p'
         ,'a','s','d','f','g','h','j','k','l'
         ,'z','x','c','v','b','n','m'
-        ,'1','2','3','4','5','6','7','8','9','0' };//¾ËÆÄºª, ¼ıÀÚ´Â Ãß°¡ÇÏ°Å³ª ¹Ù²Ü ÇÊ¿ä ¾øÀ¸´Ï ÅØ½ºÆ® ÆÄÀÏ·Î ÀúÀåÇÏÁö ¾Ê°í ±×³É ¹è¿­¿¡ ÀúÀå
+        ,'1','2','3','4','5','6','7','8','9','0' };//ì•ŒíŒŒë²³, ìˆ«ìëŠ” ì¶”ê°€í•˜ê±°ë‚˜ ë°”ê¿€ í•„ìš” ì—†ìœ¼ë‹ˆ í…ìŠ¤íŠ¸ íŒŒì¼ë¡œ ì €ì¥í•˜ì§€ ì•Šê³  ê·¸ëƒ¥ ë°°ì—´ì— ì €ì¥
     float accuracy = 0;
     SRand(a);
     int WrongCount = 0;
@@ -248,13 +248,13 @@ void spot_practice(int a) {
         SetFontSize(20);
         DrawString(540, 0, correct, GetColor(255, 255, 51));
         DrawString(550, 0, "/", GetColor(255, 255, 51));
-        DrawString(560, 0, per, GetColor(153, 203, 255));// ÀüÃ¼/¸ÂÀº°¹¼ö ¿À¸¥ÂÊ À§¿¡ Ãâ·ÂÇÏ±â
+        DrawString(560, 0, per, GetColor(153, 203, 255));// ì „ì²´/ë§ì€ê°¯ìˆ˜ ì˜¤ë¥¸ìª½ ìœ„ì— ì¶œë ¥í•˜ê¸°
         char Rn[2];
         Rn[0] = spot[GetRand(35)];
         Rn[1] = '\0';
         SetFontSize(64);
         DrawString(280, 200, Rn, GetColor(255, 255, 255));
-        while (ScreenFlip() == 0 && ProcessMessage() == 0 && gpUpdateKey() == 0) {//Å°ÀÇ ÀúÀå»óÅÂ¸¦ ¹Ş¾ÒÀ¸´Ï ÀÌ¸¦ ÀÌ¿ëÇÏ·Á Çß´Âµ¥ Á¶±İ ´õ·´°Ô ½áÁøµí ÇÏ´Ù...
+        while (ScreenFlip() == 0 && ProcessMessage() == 0 && gpUpdateKey() == 0) {//í‚¤ì˜ ì €ì¥ìƒíƒœë¥¼ ë°›ì•˜ìœ¼ë‹ˆ ì´ë¥¼ ì´ìš©í•˜ë ¤ í–ˆëŠ”ë° ì¡°ê¸ˆ ë”ëŸ½ê²Œ ì¨ì§„ë“¯ í•˜ë‹¤...
             if (Rn[0] == 'q' && Key[KEY_INPUT_Q] == 1) accuracy += 1;
             else if (Rn[0] == 'w' && Key[KEY_INPUT_W] == 1) accuracy += 1;
             else if (Rn[0] == 'e' && Key[KEY_INPUT_E] == 1) accuracy += 1;
@@ -334,13 +334,13 @@ void spot_practice(int a) {
                 Key[KEY_INPUT_1] == 1 || Key[KEY_INPUT_2] == 1 || Key[KEY_INPUT_3] == 1 ||
                 Key[KEY_INPUT_4] == 1 || Key[KEY_INPUT_5] == 1 || Key[KEY_INPUT_6] == 1 ||
                 Key[KEY_INPUT_7] == 1 || Key[KEY_INPUT_8] == 1 || Key[KEY_INPUT_9] == 1) {
-                break;//Å° ÀÔ·Â¹Ş¾Æ¼­ while¹® ¹ş¾î³ª´Â°Å±äÇÑµ¥... ³Ê¹« ÁöÀúºĞÇÔ
+                break;//í‚¤ ì…ë ¥ë°›ì•„ì„œ whileë¬¸ ë²—ì–´ë‚˜ëŠ”ê±°ê¸´í•œë°... ë„ˆë¬´ ì§€ì €ë¶„í•¨
             }
         }
         ClearDrawScreen();
     }
-    WrongCount = 10 - accuracy;//10Àº ¹İº¹È½¼ö
-    accuracy = accuracy * 100 / 10; //10Àº ¹İº¹È½¼ö
+    WrongCount = 10 - accuracy;//10ì€ ë°˜ë³µíšŸìˆ˜
+    accuracy = accuracy * 100 / 10; //10ì€ ë°˜ë³µíšŸìˆ˜
     char WrongCount2[128];
     sprintf_s(WrongCount2, sizeof(WrongCount2), "%d", WrongCount);
     char accuracy2[128];
@@ -356,11 +356,11 @@ void spot_practice(int a) {
     gpUpdateKey();
 }
 typedef struct {
-    int x, y; // ÁÂÇ¥ ÀúÀå¿ë º¯¼ö
-    char name[128]; // Ç×¸ñ ÀÌ¸§ ÀúÀå º¯¼ö
-} MenuElement_t;// °¡Á®¿Â ÄÚµå
+    int x, y; // ì¢Œí‘œ ì €ì¥ìš© ë³€ìˆ˜
+    char name[128]; // í•­ëª© ì´ë¦„ ì €ì¥ ë³€ìˆ˜
+} MenuElement_t;// ê°€ì ¸ì˜¨ ì½”ë“œ
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-    ChangeWindowMode(TRUE), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);// ±âÃÊ ¼³Á¤
+    ChangeWindowMode(TRUE), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);// ê¸°ì´ˆ ì„¤ì •
     ChangeFont("Comic Sans MS");
     MenuElement_t MenuElement[5] = {
             { 80, 100, "Spot Practice"},
@@ -369,46 +369,46 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             { 100, 250, "Long Writing Practice"},
             { 100, 300, "Exit"},
     };
-    int SelectNum = 0; // ¸Ş´º ¼±ÅÃ ¹øÈ£
-    int SelectNum2 = 0; // ±ä±Û¿¬½ÀÀÇ ¼±ÅÃ ¹øÈ£
-    int screen = 0; // Ã¢¸ğµå, ÀüÃ¼È­¸é »óÅÂ¸¦ ³ªÅ¸³»´Â Á¤¼ö
+    int SelectNum = 0; // ë©”ë‰´ ì„ íƒ ë²ˆí˜¸
+    int SelectNum2 = 0; // ê¸´ê¸€ì—°ìŠµì˜ ì„ íƒ ë²ˆí˜¸
+    int screen = 0; // ì°½ëª¨ë“œ, ì „ì²´í™”ë©´ ìƒíƒœë¥¼ ë‚˜íƒ€ë‚´ëŠ” ì •ìˆ˜
     while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && gpUpdateKey() == 0){
         int notepad = LoadGraph("notepad.png");
-        time_t random = time(NULL); //·£´ı¼ıÀÚ ½ÃÀÛ À§Ä¡ °áÁ¤ (195738201738....·Î ÀÌ·ç¾îÁø ¹è¿­Áß ½ÃÀÛ À§Ä¡ °áÁ¤ÇÏ´Â½Ä)
+        time_t random = time(NULL); //ëœë¤ìˆ«ì ì‹œì‘ ìœ„ì¹˜ ê²°ì • (195738201738....ë¡œ ì´ë£¨ì–´ì§„ ë°°ì—´ì¤‘ ì‹œì‘ ìœ„ì¹˜ ê²°ì •í•˜ëŠ”ì‹)
         DrawGraph(-270, -100, notepad, TRUE);
-        if (Key[KEY_INPUT_DOWN] == 1){ // ¾Æ·¡ Å° ´­·¶À»¶§ ¸Ş´º Á¦¾î
+        if (Key[KEY_INPUT_DOWN] == 1){ // ì•„ë˜ í‚¤ ëˆŒë €ì„ë•Œ ë©”ë‰´ ì œì–´
             SelectNum = (SelectNum + 1) % 5;
         }
-        if (Key[KEY_INPUT_UP] == 1){ // À§ Å° ´­·¶À»¶§ ¸Ş´º Á¦¾î
+        if (Key[KEY_INPUT_UP] == 1){ // ìœ„ í‚¤ ëˆŒë €ì„ë•Œ ë©”ë‰´ ì œì–´
             SelectNum = (SelectNum + 4) % 5;
         }
         if (Key[KEY_INPUT_DOWN] == 1 || Key[KEY_INPUT_UP] == 1){
             for (int i = 0; i < 5; i++){
                 if (i == SelectNum){
-                    MenuElement[i].x = 80; // ¼±ÅÃµÈ ¸Ş´ºÀÇ xÁÂÇ¥¸¦ 80À¸·Î ¼³Á¤(±Û ÀÚÃ¼°¡ Á¶±İ µÚ·Î °¡¼­ ¸¶Ä¡ À§·Î ¶°ÀÖ´Â µíÇÑ ´À³¦À» ÁÜ)
+                    MenuElement[i].x = 80; // ì„ íƒëœ ë©”ë‰´ì˜ xì¢Œí‘œë¥¼ 80ìœ¼ë¡œ ì„¤ì •(ê¸€ ìì²´ê°€ ì¡°ê¸ˆ ë’¤ë¡œ ê°€ì„œ ë§ˆì¹˜ ìœ„ë¡œ ë– ìˆëŠ” ë“¯í•œ ëŠë‚Œì„ ì¤Œ)
                 }
                 else{
                     MenuElement[i].x = 100;
                 }
             }
         }
-        for (int i = 0; i < 5; i++){ // ¸Ş´º ±×¸®±â
+        for (int i = 0; i < 5; i++){ // ë©”ë‰´ ê·¸ë¦¬ê¸°
 
             DrawFormatString(MenuElement[i].x, MenuElement[i].y, GetColor(0, 0, 0), MenuElement[i].name);
         }
         SetFontSize(35);
-        DrawFormatString(110, 20, GetColor(0, 0, 0), "English Typing Practice");// Å¸ÀÌÆ² ´Ş±â
+        DrawFormatString(110, 20, GetColor(0, 0, 0), "English Typing Practice");// íƒ€ì´í‹€ ë‹¬ê¸°
         SetFontSize(17);
-        if (screen == 0 && Key[KEY_INPUT_ESCAPE] == 1) { // esc ÀÔ·Â½Ã ÇÁ·Î±×·¥ Á¾·á(Ã¢¸ğµåÀÏ¶§)
+        if (screen == 0 && Key[KEY_INPUT_ESCAPE] == 1) { // esc ì…ë ¥ì‹œ í”„ë¡œê·¸ë¨ ì¢…ë£Œ(ì°½ëª¨ë“œì¼ë•Œ)
             gpUpdateKey();
             break;
         }
-        if (Key[KEY_INPUT_F11] == 1) { // f12 ÀÔ·ÂÀ¸·Î ÀüÃ¼È­¸éÀ¸·Î º¯È¯
+        if (Key[KEY_INPUT_F11] == 1) { // f12 ì…ë ¥ìœ¼ë¡œ ì „ì²´í™”ë©´ìœ¼ë¡œ ë³€í™˜
             gpUpdateKey();
             ChangeWindowMode(FALSE);
             screen = 1;
         }
-        if (screen == 1 && Key[KEY_INPUT_ESCAPE] == 1) { // esc ÀÔ·ÂÀ¸·Î ÀüÃ¼È­¸é¿¡¼­ Ã¢¸ğµå·Î º¯È¯
+        if (screen == 1 && Key[KEY_INPUT_ESCAPE] == 1) { // esc ì…ë ¥ìœ¼ë¡œ ì „ì²´í™”ë©´ì—ì„œ ì°½ëª¨ë“œë¡œ ë³€í™˜
             gpUpdateKey();
             ChangeWindowMode(TRUE);
             screen = 0;
@@ -426,7 +426,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 ClearDrawScreen();
                 short_writing_practice("short.txt", random);
             }
-            else if (SelectNum == 3){// ¸Ş´º ¾È¿¡ »õ·Î¿î ¸Ş´º(±ä±Û ¼±ÅÃ)
+            else if (SelectNum == 3){// ë©”ë‰´ ì•ˆì— ìƒˆë¡œìš´ ë©”ë‰´(ê¸´ê¸€ ì„ íƒ)
                 ClearDrawScreen();
                 MenuElement_t MenuElement2[5] = {
             { 80, 100, "Daniel Powter - Bad day"},
@@ -442,24 +442,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     }
                     if (Key[KEY_INPUT_UP] == 1){
                         SelectNum2 = (SelectNum2 + 4) % 5;
-                    }// À§ ¾Æ·¡ Å° ´­·¶À»¶§ ¸Ş´º Á¦¾î
+                    }// ìœ„ ì•„ë˜ í‚¤ ëˆŒë €ì„ë•Œ ë©”ë‰´ ì œì–´
                     if (Key[KEY_INPUT_DOWN] == 1 || Key[KEY_INPUT_UP] == 1){
                         for (int i = 0; i < 5; i++){
                             if (i == SelectNum2){
-                                MenuElement2[i].x = 80; // ¼±ÅÃµÈ ¸Ş´ºÀÇ xÁÂÇ¥¸¦ 80À¸·Î ¼³Á¤(±Û ÀÚÃ¼°¡ Á¶±İ µÚ·Î °¡¼­ ¸¶Ä¡ À§·Î ¶°ÀÖ´Â µíÇÑ ´À³¦À» ÁÜ)
+                                MenuElement2[i].x = 80; // ì„ íƒëœ ë©”ë‰´ì˜ xì¢Œí‘œë¥¼ 80ìœ¼ë¡œ ì„¤ì •(ê¸€ ìì²´ê°€ ì¡°ê¸ˆ ë’¤ë¡œ ê°€ì„œ ë§ˆì¹˜ ìœ„ë¡œ ë– ìˆëŠ” ë“¯í•œ ëŠë‚Œì„ ì¤Œ)
                             }
                             else{
                                 MenuElement2[i].x = 100;
                             }
                         }
                     }
-                    for (int i = 0; i < 5; i++){ // ¸Ş´º ±×¸®±â
+                    for (int i = 0; i < 5; i++){ // ë©”ë‰´ ê·¸ë¦¬ê¸°
                         DrawFormatString(MenuElement2[i].x, MenuElement2[i].y, GetColor(0, 0, 0), MenuElement2[i].name);
                     }
                     if (Key[KEY_INPUT_ESCAPE] == 1){
                         gpUpdateKey();
                         break;
-                    }// esc ÀÔ·ÂÀ¸·Î ¸Ş´º È­¸éÀ¸·Î µ¹¾Æ°¡±â
+                    }// esc ì…ë ¥ìœ¼ë¡œ ë©”ë‰´ í™”ë©´ìœ¼ë¡œ ëŒì•„ê°€ê¸°
                     if (Key[KEY_INPUT_RETURN] == 1){
                         if (SelectNum2 == 0) {
                             ClearDrawScreen();
