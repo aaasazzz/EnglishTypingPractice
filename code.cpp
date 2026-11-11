@@ -5,6 +5,13 @@
 #include <vector>
 using namespace std;
 
+void ClearPendingInput() {
+    while (CheckHitKey(KEY_INPUT_RETURN) != 0) {
+        if (ProcessMessage() != 0) return;
+    }
+    ProcessMessage();
+    ClearInputCharBuf();
+}
 
 struct LongText {
     string title;
@@ -93,6 +100,7 @@ void long_writing_practice(string a) {
             }
         }//한 페이지 끝났을 때
         DrawString(0, Wy, text, GetColor(255, 255, 255));//써야되는 문장 출력
+        ClearPendingInput();
         KeyInputString(0, Wy + 20, 300, input, FALSE);//문장 쓰는거 입력
         int size = strlen(text);
         accuracy += size;
@@ -156,6 +164,7 @@ void short_writing_practice(string a, int b) {
         int ran = GetRand(accuracy);//랜덤으로 문장 고르기
         DrawString(0, Wy, text[ran], GetColor(255, 255, 255));//써야되는 문장 출력
         start = time(NULL);
+        ClearPendingInput();
         KeyInputString(0, Wy + 20, 300, input, FALSE);//문장 쓰는거 입력
         int wordsize = strlen(text[ran]);
         for (int i = 0; i < wordsize; i++) {
@@ -218,6 +227,7 @@ void word_practice(int a) {
         DrawString(560, 0, per, GetColor(153, 203, 255));// 전체/맞은 단어 오른쪽 위에 출력하기
         SetFontSize(64);
         DrawString(200, 168, text[ran], GetColor(255, 255, 255));//써야되는 문장 출력
+        ClearPendingInput();
         KeyInputString(200, 232, 300, input, FALSE);//문장 쓰는거 입력
         ClearDrawScreen();
         int wordsize = strlen(text[ran]);
@@ -392,8 +402,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int SelectNum = 0; // 메뉴 선택 번호
     int SelectNum2 = 0; // 긴글연습의 선택 번호
     int screen = 0; // 창모드, 전체화면 상태를 나타내는 정수
+    int notepad = LoadGraph(resourcePaths.wallpaper.c_str());
     while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && gpUpdateKey() == 0){
-        int notepad = LoadGraph(resourcePaths.wallpaper.c_str());
         time_t random = time(NULL); //랜덤숫자 시작 위치 결정 (195738201738....로 이루어진 배열중 시작 위치 결정하는식)
         DrawGraph(-270, -100, notepad, TRUE);
         if (Key[KEY_INPUT_DOWN] == 1){ // 아래 키 눌렀을때 메뉴 제어
