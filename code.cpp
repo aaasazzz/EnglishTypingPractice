@@ -2,7 +2,27 @@
 #include <iostream>
 #include <string>
 #include <time.h>
+#include <vector>
 using namespace std;
+
+
+struct LongText {
+    string title;
+    string filePath;
+};
+
+struct ResourcePaths{
+    string wallpaper = "resources/notepad.png";
+    string words = "resources/words.txt";
+    string shortWriting = "resources/short.txt";
+    vector<LongText> longWriting = {
+        { "Alice's Adventures in Wonderland", "resources/long_writing/Alice's Adventures in Wonderland.txt" },
+        { "Peter Pan", "resources/long_writing/Peter Pan.txt" },
+        { "The Wonderful Wizard of Oz", "resources/long_writing/The Wonderful Wizard of Oz.txt" },
+    };
+};
+
+const ResourcePaths resourcePaths;
 
 int Key[256]; // 키가 눌러진 프레임 수를 저장한다
 
@@ -175,7 +195,7 @@ void word_practice(int a) {
     int correct = 0;//현재 맞은 개수(실행중 표시해주기 위한)
     char** text = new char* [250];
     for (int i = 0; i < 250; i++) text[i] = new char[128];//동적 할당 해주기(250단어, 각각128글자씩 가능)
-    textstream = FileRead_open("words.txt");
+    textstream = FileRead_open(resourcePaths.words.c_str());
     int Wy = 0;
     int s = 0;
     while (FileRead_eof(textstream) == 0) {
@@ -373,7 +393,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int SelectNum2 = 0; // 긴글연습의 선택 번호
     int screen = 0; // 창모드, 전체화면 상태를 나타내는 정수
     while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && gpUpdateKey() == 0){
-        int notepad = LoadGraph("notepad.png");
+        int notepad = LoadGraph(resourcePaths.wallpaper.c_str());
         time_t random = time(NULL); //랜덤숫자 시작 위치 결정 (195738201738....로 이루어진 배열중 시작 위치 결정하는식)
         DrawGraph(-270, -100, notepad, TRUE);
         if (Key[KEY_INPUT_DOWN] == 1){ // 아래 키 눌렀을때 메뉴 제어
@@ -424,27 +444,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             }
             else if (SelectNum == 2){
                 ClearDrawScreen();
-                short_writing_practice("short.txt", random);
+                short_writing_practice(resourcePaths.shortWriting, random);
             }
             else if (SelectNum == 3){// 메뉴 안에 새로운 메뉴(긴글 선택)
                 ClearDrawScreen();
-                MenuElement_t MenuElement2[5] = {
-            { 80, 100, "Daniel Powter - Bad day"},
-            { 100, 150, "Hekuto Pascal - fish in the pool"},
-            { 100, 200, "Christopher - Bad"},
-            { 100, 250, "Lukas Graham - 7 years"},
-            { 100, 300, "Back"},
-                };
+                int item_cnt = resourcePaths.longWriting.size() + 1; // 메뉴 항목 개수
+                vector<MenuElement_t> MenuElement2(item_cnt);
+                for (int i = 0; i < item_cnt; i++){
+                    if(i == item_cnt-1){
+                        MenuElement2[i].x = 100;
+                        MenuElement2[i].y = 100 + i * 50;
+                        strcpy_s(MenuElement2[i].name, "Back");
+                        break;
+                    }
+                    if(i == SelectNum2) MenuElement2[i].x = 80;
+                    else MenuElement2[i].x = 100;
+                    MenuElement2[i].y = 100 + i * 50;
+                    strcpy_s(MenuElement2[i].name, resourcePaths.longWriting[i].title.c_str());
+                }
                 while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && gpUpdateKey() == 0){
                     DrawGraph(-270, -100, notepad, TRUE);
                     if (Key[KEY_INPUT_DOWN] == 1){
-                        SelectNum2 = (SelectNum2 + 1) % 5;
+                        SelectNum2 = (SelectNum2 + 1) % item_cnt;
                     }
                     if (Key[KEY_INPUT_UP] == 1){
-                        SelectNum2 = (SelectNum2 + 4) % 5;
+                        SelectNum2 = (SelectNum2 + item_cnt-1) % item_cnt;
                     }// 위 아래 키 눌렀을때 메뉴 제어
                     if (Key[KEY_INPUT_DOWN] == 1 || Key[KEY_INPUT_UP] == 1){
-                        for (int i = 0; i < 5; i++){
+                        for (int i = 0; i < item_cnt; i++){
                             if (i == SelectNum2){
                                 MenuElement2[i].x = 80; // 선택된 메뉴의 x좌표를 80으로 설정(글 자체가 조금 뒤로 가서 마치 위로 떠있는 듯한 느낌을 줌)
                             }
@@ -453,7 +480,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                             }
                         }
                     }
-                    for (int i = 0; i < 5; i++){ // 메뉴 그리기
+                    for (int i = 0; i < item_cnt; i++){ // 메뉴 그리기
                         DrawFormatString(MenuElement2[i].x, MenuElement2[i].y, GetColor(0, 0, 0), MenuElement2[i].name);
                     }
                     if (Key[KEY_INPUT_ESCAPE] == 1){
@@ -461,23 +488,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                         break;
                     }// esc 입력으로 메뉴 화면으로 돌아가기
                     if (Key[KEY_INPUT_RETURN] == 1){
-                        if (SelectNum2 == 0) {
+                        if(SelectNum2 < item_cnt-1){
                             ClearDrawScreen();
-                            long_writing_practice("Daniel Powter - Bad day.txt");
+                            long_writing_practice(resourcePaths.longWriting[SelectNum2].filePath);
                         }
-                        else if (SelectNum2 == 1){
-                            ClearDrawScreen();
-                            long_writing_practice("Hekuto Pascal - fish in the pool.txt");
-                        }
-                        else if (SelectNum2 == 2){
-                            ClearDrawScreen();
-                            long_writing_practice("Christopher - Bad.txt");
-                        }
-                        else if (SelectNum2 == 3){
-                            ClearDrawScreen();
-                            long_writing_practice("Lukas Graham - 7 years.txt");
-                        }
-                        else if (SelectNum2 == 4){
+                        else if(SelectNum2 == item_cnt-1){
                             break;
                         }
                     }
