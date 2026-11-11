@@ -53,17 +53,12 @@ void long_writing_practice(string a) {
     int wrong_count = 0;
     float accuracy = 0;//정확도를 구하는데 필요한 변수
     char text[128];
-    char a2[128];
     char type_per_min2[128];//2 붙은 것들은 출력을 위해 자료형을 변환시켜준 것들
     char real_accuracy2[128];
     float real_accuracy;
     double type_per_min;
 
-    for (int i = 0; i < a.size(); i++) {
-        a2[i] = a[i];
-    }
-    a2[a.size() + 1] = '\0';//a를 char[] 형식으로 변환
-    textstream = FileRead_open(a2);
+    textstream = FileRead_open(a.c_str());
     time_t start, end;
     start = time(NULL);
     int Wy = 0;//문장들이 출력되는 위치를 조정하는 변수(y값)
@@ -141,13 +136,8 @@ void short_writing_practice(string a, int b) {
     char input[128];
     int textstream;
     char text[25][128];//25문장, 각 문장당 128글자까지 가능
-    char a2[128];
     time_t start, end;
-    for (int i = 0; i < a.size(); i++) {//a값 a2에 복사(string, char)
-        a2[i] = a[i];
-    }
-    a2[a.size() + 1] = '\0';
-    textstream = FileRead_open(a2);
+    textstream = FileRead_open(a.c_str());
     int Wy = 0;
     int s = 0;
     float accuracy = 0; // 정확도 아님 문장 전체 개수임(변수명에 맞지 않게 사용됨)
