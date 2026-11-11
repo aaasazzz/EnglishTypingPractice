@@ -433,14 +433,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             gpUpdateKey();
             break;
         }
-        if (Key[KEY_INPUT_F11] == 1) { // f12 입력으로 전체화면으로 변환
+        if (Key[KEY_INPUT_F11] == 1) { // f11 입력으로 전체화면으로 변환
             gpUpdateKey();
             ChangeWindowMode(FALSE);
+            SetDrawScreen(DX_SCREEN_BACK);
+            notepad = LoadGraph(resourcePaths.wallpaper.c_str());
             screen = 1;
         }
         if (screen == 1 && Key[KEY_INPUT_ESCAPE] == 1) { // esc 입력으로 전체화면에서 창모드로 변환
             gpUpdateKey();
             ChangeWindowMode(TRUE);
+            SetDrawScreen(DX_SCREEN_BACK);
+            notepad = LoadGraph(resourcePaths.wallpaper.c_str());
             screen = 0;
         }
         if (Key[KEY_INPUT_RETURN] == 1){
