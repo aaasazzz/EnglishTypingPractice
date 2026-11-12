@@ -5,6 +5,13 @@
 #include <vector>
 using namespace std;
 
+void ClearPendingInput() {
+    while (CheckHitKey(KEY_INPUT_RETURN) != 0) {
+        if (ProcessMessage() != 0) return;
+    }
+    ProcessMessage();
+    ClearInputCharBuf();
+}
 
 struct LongText {
     string title;
@@ -46,24 +53,19 @@ void long_writing_practice(string a) {
     int wrong_count = 0;
     float accuracy = 0;//정확도를 구하는데 필요한 변수
     char text[128];
-    char a2[128];
     char type_per_min2[128];//2 붙은 것들은 출력을 위해 자료형을 변환시켜준 것들
     char real_accuracy2[128];
     float real_accuracy;
     double type_per_min;
 
-    for (int i = 0; i < a.size(); i++) {
-        a2[i] = a[i];
-    }
-    a2[a.size() + 1] = '\0';//a를 char[] 형식으로 변환
-    textstream = FileRead_open(a2);
+    textstream = FileRead_open(a.c_str());
     time_t start, end;
     start = time(NULL);
     int Wy = 0;//문장들이 출력되는 위치를 조정하는 변수(y값)
     int roof = 0;//화면 밖으로 넘어가는걸 방지
     int next = 0;//한 화면이 끝난 뒤 계속할지를 정하는 변수
     while (FileRead_eof(textstream) == 0) {//한줄씩 읽어주기
-        FileRead_gets(text, 256, textstream);
+        FileRead_gets(text, sizeof(text)-1, textstream);
         if (roof == 23) {//문장이 화면 밖으로 나가지 않도록 제어해주는 조건문이자 화면의 끝에 도달했을때 결과창을 출력해주는 조건문
             ClearDrawScreen();
             Wy = 0;
@@ -93,7 +95,8 @@ void long_writing_practice(string a) {
             }
         }//한 페이지 끝났을 때
         DrawString(0, Wy, text, GetColor(255, 255, 255));//써야되는 문장 출력
-        KeyInputString(0, Wy + 20, 300, input, FALSE);//문장 쓰는거 입력
+        ClearPendingInput();
+        KeyInputString(0, Wy + 20, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         int size = strlen(text);
         accuracy += size;
         for (int i = 0; i < size; i++) {//틀린계수 세기
@@ -133,19 +136,14 @@ void short_writing_practice(string a, int b) {
     char input[128];
     int textstream;
     char text[25][128];//25문장, 각 문장당 128글자까지 가능
-    char a2[128];
     time_t start, end;
-    for (int i = 0; i < a.size(); i++) {//a값 a2에 복사(string, char)
-        a2[i] = a[i];
-    }
-    a2[a.size() + 1] = '\0';
-    textstream = FileRead_open(a2);
+    textstream = FileRead_open(a.c_str());
     int Wy = 0;
     int s = 0;
     float accuracy = 0; // 정확도 아님 문장 전체 개수임(변수명에 맞지 않게 사용됨)
     float type_per_min;
     while (FileRead_eof(textstream) == 0) {
-        FileRead_gets(text[s], 256, textstream);
+        FileRead_gets(text[s], sizeof(text[0])-1, textstream);
         accuracy += 1;
         s++;
     }
@@ -156,7 +154,8 @@ void short_writing_practice(string a, int b) {
         int ran = GetRand(accuracy);//랜덤으로 문장 고르기
         DrawString(0, Wy, text[ran], GetColor(255, 255, 255));//써야되는 문장 출력
         start = time(NULL);
-        KeyInputString(0, Wy + 20, 300, input, FALSE);//문장 쓰는거 입력
+        ClearPendingInput();
+        KeyInputString(0, Wy + 20, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         int wordsize = strlen(text[ran]);
         for (int i = 0; i < wordsize; i++) {
             if (input[i] != text[ran][i]) {
@@ -199,7 +198,7 @@ void word_practice(int a) {
     int Wy = 0;
     int s = 0;
     while (FileRead_eof(textstream) == 0) {
-        FileRead_gets(text[s], 256, textstream);
+        FileRead_gets(text[s], 128-1, textstream);
         accuracy += 1;
         s++;
     }
@@ -218,7 +217,8 @@ void word_practice(int a) {
         DrawString(560, 0, per, GetColor(153, 203, 255));// 전체/맞은 단어 오른쪽 위에 출력하기
         SetFontSize(64);
         DrawString(200, 168, text[ran], GetColor(255, 255, 255));//써야되는 문장 출력
-        KeyInputString(200, 232, 300, input, FALSE);//문장 쓰는거 입력
+        ClearPendingInput();
+        KeyInputString(200, 232, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         ClearDrawScreen();
         int wordsize = strlen(text[ran]);
         int wrong = 0;
@@ -392,8 +392,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int SelectNum = 0; // 메뉴 선택 번호
     int SelectNum2 = 0; // 긴글연습의 선택 번호
     int screen = 0; // 창모드, 전체화면 상태를 나타내는 정수
+    int notepad = LoadGraph(resourcePaths.wallpaper.c_str());
     while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && gpUpdateKey() == 0){
-        int notepad = LoadGraph(resourcePaths.wallpaper.c_str());
         time_t random = time(NULL); //랜덤숫자 시작 위치 결정 (195738201738....로 이루어진 배열중 시작 위치 결정하는식)
         DrawGraph(-270, -100, notepad, TRUE);
         if (Key[KEY_INPUT_DOWN] == 1){ // 아래 키 눌렀을때 메뉴 제어
@@ -423,14 +423,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             gpUpdateKey();
             break;
         }
-        if (Key[KEY_INPUT_F11] == 1) { // f12 입력으로 전체화면으로 변환
+        if (Key[KEY_INPUT_F11] == 1) { // f11 입력으로 전체화면으로 변환
             gpUpdateKey();
             ChangeWindowMode(FALSE);
+            SetDrawScreen(DX_SCREEN_BACK);
+            notepad = LoadGraph(resourcePaths.wallpaper.c_str());
             screen = 1;
         }
         if (screen == 1 && Key[KEY_INPUT_ESCAPE] == 1) { // esc 입력으로 전체화면에서 창모드로 변환
             gpUpdateKey();
             ChangeWindowMode(TRUE);
+            SetDrawScreen(DX_SCREEN_BACK);
+            notepad = LoadGraph(resourcePaths.wallpaper.c_str());
             screen = 0;
         }
         if (Key[KEY_INPUT_RETURN] == 1){
