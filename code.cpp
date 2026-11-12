@@ -13,6 +13,28 @@ void ClearPendingInput() {
     ClearInputCharBuf();
 }
 
+struct SpotKey {
+    char c;
+    int key;
+    int numpadKey; //numpadKey처리를 위한 변수 (숫자 아니면 -1)
+};
+
+const SpotKey spotKeyList[] = {
+    { 'q', KEY_INPUT_Q, -1 }, { 'w', KEY_INPUT_W, -1 }, { 'e', KEY_INPUT_E, -1 }, { 'r', KEY_INPUT_R, -1 },
+    { 't', KEY_INPUT_T, -1 }, { 'y', KEY_INPUT_Y, -1 }, { 'u', KEY_INPUT_U, -1 }, { 'i', KEY_INPUT_I, -1 },
+    { 'o', KEY_INPUT_O, -1 }, { 'p', KEY_INPUT_P, -1 }, { 'a', KEY_INPUT_A, -1 }, { 's', KEY_INPUT_S, -1 }, 
+    { 'd', KEY_INPUT_D, -1 }, { 'f', KEY_INPUT_F, -1 }, { 'g', KEY_INPUT_G, -1 }, { 'h', KEY_INPUT_H, -1 }, 
+    { 'j', KEY_INPUT_J, -1 }, { 'k', KEY_INPUT_K, -1 }, { 'l', KEY_INPUT_L, -1 }, { 'z', KEY_INPUT_Z, -1 },
+    { 'x', KEY_INPUT_X, -1 }, { 'c', KEY_INPUT_C, -1 }, { 'v', KEY_INPUT_V, -1 }, { 'b', KEY_INPUT_B, -1 }, 
+    { 'n', KEY_INPUT_N, -1 }, { 'm', KEY_INPUT_M, -1 },
+    { '1', KEY_INPUT_1, KEY_INPUT_NUMPAD1 }, { '2', KEY_INPUT_2, KEY_INPUT_NUMPAD2 },
+    { '3', KEY_INPUT_3, KEY_INPUT_NUMPAD3 }, { '4', KEY_INPUT_4, KEY_INPUT_NUMPAD4 },
+    { '5', KEY_INPUT_5, KEY_INPUT_NUMPAD5 }, { '6', KEY_INPUT_6, KEY_INPUT_NUMPAD6 },
+    { '7', KEY_INPUT_7, KEY_INPUT_NUMPAD7 }, { '8', KEY_INPUT_8, KEY_INPUT_NUMPAD8 },
+    { '9', KEY_INPUT_9, KEY_INPUT_NUMPAD9 }, { '0', KEY_INPUT_0, KEY_INPUT_NUMPAD0 },
+};
+
+
 struct LongText {
     string title;
     string filePath;
@@ -253,10 +275,6 @@ void word_practice(int a) {
     delete[] text;//동적 할당 해제
 }
 void spot_practice(int a) {
-    char spot[36] = { 'q','w','e','r','t','y','u','i','o','p'
-        ,'a','s','d','f','g','h','j','k','l'
-        ,'z','x','c','v','b','n','m'
-        ,'1','2','3','4','5','6','7','8','9','0' };//알파벳, 숫자는 추가하거나 바꿀 필요 없으니 텍스트 파일로 저장하지 않고 그냥 배열에 저장
     float accuracy = 0;
     SRand(a);
     int WrongCount = 0;
@@ -269,93 +287,20 @@ void spot_practice(int a) {
         DrawString(540, 0, correct, GetColor(255, 255, 51));
         DrawString(550, 0, "/", GetColor(255, 255, 51));
         DrawString(560, 0, per, GetColor(153, 203, 255));// 전체/맞은갯수 오른쪽 위에 출력하기
-        char Rn[2];
-        Rn[0] = spot[GetRand(35)];
-        Rn[1] = '\0';
+        int count = sizeof(spotKeyList) / sizeof(spotKeyList[0]);
+        SpotKey spotKey = spotKeyList[GetRand(count - 1)];
         SetFontSize(64);
-        DrawString(280, 200, Rn, GetColor(255, 255, 255));
-        while (ScreenFlip() == 0 && ProcessMessage() == 0 && gpUpdateKey() == 0) {//키의 저장상태를 받았으니 이를 이용하려 했는데 조금 더럽게 써진듯 하다...
-            if (Rn[0] == 'q' && Key[KEY_INPUT_Q] == 1) accuracy += 1;
-            else if (Rn[0] == 'w' && Key[KEY_INPUT_W] == 1) accuracy += 1;
-            else if (Rn[0] == 'e' && Key[KEY_INPUT_E] == 1) accuracy += 1;
-            else if (Rn[0] == 'r' && Key[KEY_INPUT_R] == 1) accuracy += 1;
-            else if (Rn[0] == 't' && Key[KEY_INPUT_T] == 1) accuracy += 1;
-            else if (Rn[0] == 'y' && Key[KEY_INPUT_Y] == 1) accuracy += 1;
-            else if (Rn[0] == 'u' && Key[KEY_INPUT_U] == 1) accuracy += 1;
-            else if (Rn[0] == 'i' && Key[KEY_INPUT_I] == 1) accuracy += 1;
-            else if (Rn[0] == 'o' && Key[KEY_INPUT_O] == 1) accuracy += 1;
-            else if (Rn[0] == 'p' && Key[KEY_INPUT_P] == 1) accuracy += 1;
-            else if (Rn[0] == 'a' && Key[KEY_INPUT_A] == 1) accuracy += 1;
-            else if (Rn[0] == 's' && Key[KEY_INPUT_S] == 1) accuracy += 1;
-            else if (Rn[0] == 'd' && Key[KEY_INPUT_D] == 1) accuracy += 1;
-            else if (Rn[0] == 'f' && Key[KEY_INPUT_F] == 1) accuracy += 1;
-            else if (Rn[0] == 'g' && Key[KEY_INPUT_G] == 1) accuracy += 1;
-            else if (Rn[0] == 'h' && Key[KEY_INPUT_H] == 1) accuracy += 1;
-            else if (Rn[0] == 'j' && Key[KEY_INPUT_J] == 1) accuracy += 1;
-            else if (Rn[0] == 'k' && Key[KEY_INPUT_K] == 1) accuracy += 1;
-            else if (Rn[0] == 'l' && Key[KEY_INPUT_L] == 1) accuracy += 1;
-            else if (Rn[0] == 'z' && Key[KEY_INPUT_Z] == 1) accuracy += 1;
-            else if (Rn[0] == 'x' && Key[KEY_INPUT_X] == 1) accuracy += 1;
-            else if (Rn[0] == 'c' && Key[KEY_INPUT_C] == 1) accuracy += 1;
-            else if (Rn[0] == 'v' && Key[KEY_INPUT_V] == 1) accuracy += 1;
-            else if (Rn[0] == 'b' && Key[KEY_INPUT_B] == 1) accuracy += 1;
-            else if (Rn[0] == 'n' && Key[KEY_INPUT_N] == 1) accuracy += 1;
-            else if (Rn[0] == 'm' && Key[KEY_INPUT_M] == 1) accuracy += 1;
-            else if (Rn[0] == '1' && Key[KEY_INPUT_1] == 1) accuracy += 1;
-            else if (Rn[0] == '2' && Key[KEY_INPUT_2] == 1) accuracy += 1;
-            else if (Rn[0] == '3' && Key[KEY_INPUT_3] == 1) accuracy += 1;
-            else if (Rn[0] == '4' && Key[KEY_INPUT_4] == 1) accuracy += 1;
-            else if (Rn[0] == '5' && Key[KEY_INPUT_5] == 1) accuracy += 1;
-            else if (Rn[0] == '6' && Key[KEY_INPUT_6] == 1) accuracy += 1;
-            else if (Rn[0] == '7' && Key[KEY_INPUT_7] == 1) accuracy += 1;
-            else if (Rn[0] == '8' && Key[KEY_INPUT_8] == 1) accuracy += 1;
-            else if (Rn[0] == '9' && Key[KEY_INPUT_9] == 1) accuracy += 1;
-            else if (Rn[0] == '0' && Key[KEY_INPUT_0] == 1) accuracy += 1;
-            else if (Rn[0] == '1' && Key[KEY_INPUT_NUMPAD1] == 1) accuracy += 1;
-            else if (Rn[0] == '2' && Key[KEY_INPUT_NUMPAD2] == 1) accuracy += 1;
-            else if (Rn[0] == '3' && Key[KEY_INPUT_NUMPAD3] == 1) accuracy += 1;
-            else if (Rn[0] == '4' && Key[KEY_INPUT_NUMPAD4] == 1) accuracy += 1;
-            else if (Rn[0] == '5' && Key[KEY_INPUT_NUMPAD5] == 1) accuracy += 1;
-            else if (Rn[0] == '6' && Key[KEY_INPUT_NUMPAD6] == 1) accuracy += 1;
-            else if (Rn[0] == '7' && Key[KEY_INPUT_NUMPAD7] == 1) accuracy += 1;
-            else if (Rn[0] == '8' && Key[KEY_INPUT_NUMPAD8] == 1) accuracy += 1;
-            else if (Rn[0] == '9' && Key[KEY_INPUT_NUMPAD9] == 1) accuracy += 1;
-            else if (Rn[0] == '0' && Key[KEY_INPUT_NUMPAD0] == 1) accuracy += 1;
-            if (Key[KEY_INPUT_BACK] == 1 || Key[KEY_INPUT_TAB] == 1 || Key[KEY_INPUT_RETURN] == 1 ||
-                Key[KEY_INPUT_LSHIFT] == 1 || Key[KEY_INPUT_RSHIFT] == 1 || Key[KEY_INPUT_LCONTROL] == 1 ||
-                Key[KEY_INPUT_RCONTROL] == 1 || Key[KEY_INPUT_ESCAPE] == 1 || Key[KEY_INPUT_SPACE] == 1 ||
-                Key[KEY_INPUT_PGUP] == 1 || Key[KEY_INPUT_PGDN] == 1 || Key[KEY_INPUT_END] == 1 ||
-                Key[KEY_INPUT_HOME] == 1 || Key[KEY_INPUT_LEFT] == 1 || Key[KEY_INPUT_UP] == 1 ||
-                Key[KEY_INPUT_RIGHT] == 1 || Key[KEY_INPUT_DOWN] == 1 || Key[KEY_INPUT_INSERT] == 1 ||
-                Key[KEY_INPUT_DELETE] == 1 || Key[KEY_INPUT_MINUS] == 1 || Key[KEY_INPUT_PREVTRACK] == 1 ||
-                Key[KEY_INPUT_PERIOD] == 1 || Key[KEY_INPUT_SLASH] == 1 || Key[KEY_INPUT_LALT] == 1 ||
-                Key[KEY_INPUT_RALT] == 1 || Key[KEY_INPUT_SCROLL] == 1 || Key[KEY_INPUT_SEMICOLON] == 1 ||
-                Key[KEY_INPUT_COLON] == 1 || Key[KEY_INPUT_LBRACKET] == 1 || Key[KEY_INPUT_RBRACKET] == 1 ||
-                Key[KEY_INPUT_AT] == 1 || Key[KEY_INPUT_BACKSLASH] == 1 || Key[KEY_INPUT_COMMA] == 1 ||
-                Key[KEY_INPUT_CAPSLOCK] == 1 || Key[KEY_INPUT_PAUSE] == 1 || Key[KEY_INPUT_NUMPAD0] == 1 ||
-                Key[KEY_INPUT_NUMPAD1] == 1 || Key[KEY_INPUT_NUMPAD2] == 1 || Key[KEY_INPUT_NUMPAD3] == 1 ||
-                Key[KEY_INPUT_NUMPAD4] == 1 || Key[KEY_INPUT_NUMPAD5] == 1 || Key[KEY_INPUT_NUMPAD6] == 1 ||
-                Key[KEY_INPUT_NUMPAD7] == 1 || Key[KEY_INPUT_NUMPAD8] == 1 || Key[KEY_INPUT_NUMPAD9] == 1 ||
-                Key[KEY_INPUT_MULTIPLY] == 1 || Key[KEY_INPUT_ADD] == 1 || Key[KEY_INPUT_SUBTRACT] == 1 ||
-                Key[KEY_INPUT_DECIMAL] == 1 || Key[KEY_INPUT_DIVIDE] == 1 || Key[KEY_INPUT_NUMPADENTER] == 1 ||
-                Key[KEY_INPUT_F1] == 1 || Key[KEY_INPUT_F2] == 1 || Key[KEY_INPUT_F3] == 1 ||
-                Key[KEY_INPUT_F4] == 1 || Key[KEY_INPUT_F5] == 1 || Key[KEY_INPUT_F6] == 1 ||
-                Key[KEY_INPUT_F7] == 1 || Key[KEY_INPUT_F8] == 1 || Key[KEY_INPUT_F9] == 1 ||
-                Key[KEY_INPUT_F10] == 1 || Key[KEY_INPUT_F11] == 1 || Key[KEY_INPUT_F12] == 1 ||
-                Key[KEY_INPUT_A] == 1 || Key[KEY_INPUT_B] == 1 || Key[KEY_INPUT_C] == 1 ||
-                Key[KEY_INPUT_D] == 1 || Key[KEY_INPUT_E] == 1 || Key[KEY_INPUT_F] == 1 ||
-                Key[KEY_INPUT_G] == 1 || Key[KEY_INPUT_H] == 1 || Key[KEY_INPUT_I] == 1 ||
-                Key[KEY_INPUT_J] == 1 || Key[KEY_INPUT_K] == 1 || Key[KEY_INPUT_L] == 1 ||
-                Key[KEY_INPUT_M] == 1 || Key[KEY_INPUT_N] == 1 || Key[KEY_INPUT_O] == 1 ||
-                Key[KEY_INPUT_P] == 1 || Key[KEY_INPUT_Q] == 1 || Key[KEY_INPUT_R] == 1 ||
-                Key[KEY_INPUT_S] == 1 || Key[KEY_INPUT_T] == 1 || Key[KEY_INPUT_U] == 1 ||
-                Key[KEY_INPUT_V] == 1 || Key[KEY_INPUT_W] == 1 || Key[KEY_INPUT_X] == 1 ||
-                Key[KEY_INPUT_Y] == 1 || Key[KEY_INPUT_Z] == 1 || Key[KEY_INPUT_0] == 1 ||
-                Key[KEY_INPUT_1] == 1 || Key[KEY_INPUT_2] == 1 || Key[KEY_INPUT_3] == 1 ||
-                Key[KEY_INPUT_4] == 1 || Key[KEY_INPUT_5] == 1 || Key[KEY_INPUT_6] == 1 ||
-                Key[KEY_INPUT_7] == 1 || Key[KEY_INPUT_8] == 1 || Key[KEY_INPUT_9] == 1) {
-                break;//키 입력받아서 while문 벗어나는거긴한데... 너무 지저분함
+        DrawString(280, 200, string(1, spotKey.c).c_str(), GetColor(255, 255, 255));
+        while (ScreenFlip() == 0 && ProcessMessage() == 0 && gpUpdateKey() == 0) {
+            if (Key[spotKey.key] == 1 || (spotKey.numpadKey != -1 && Key[spotKey.numpadKey] == 1)) accuracy += 1;
+            bool escape_flag = false;
+            for (int k = 0; k < 256; k++) {
+                if (Key[k] == 1){
+                    escape_flag = true; 
+                    break;
+                }
             }
+            if (escape_flag) break;
         }
         ClearDrawScreen();
     }
