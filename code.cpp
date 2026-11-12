@@ -65,7 +65,7 @@ void long_writing_practice(string a) {
     int roof = 0;//화면 밖으로 넘어가는걸 방지
     int next = 0;//한 화면이 끝난 뒤 계속할지를 정하는 변수
     while (FileRead_eof(textstream) == 0) {//한줄씩 읽어주기
-        FileRead_gets(text, 256, textstream);
+        FileRead_gets(text, sizeof(text)-1, textstream);
         if (roof == 23) {//문장이 화면 밖으로 나가지 않도록 제어해주는 조건문이자 화면의 끝에 도달했을때 결과창을 출력해주는 조건문
             ClearDrawScreen();
             Wy = 0;
@@ -96,7 +96,7 @@ void long_writing_practice(string a) {
         }//한 페이지 끝났을 때
         DrawString(0, Wy, text, GetColor(255, 255, 255));//써야되는 문장 출력
         ClearPendingInput();
-        KeyInputString(0, Wy + 20, 300, input, FALSE);//문장 쓰는거 입력
+        KeyInputString(0, Wy + 20, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         int size = strlen(text);
         accuracy += size;
         for (int i = 0; i < size; i++) {//틀린계수 세기
@@ -143,7 +143,7 @@ void short_writing_practice(string a, int b) {
     float accuracy = 0; // 정확도 아님 문장 전체 개수임(변수명에 맞지 않게 사용됨)
     float type_per_min;
     while (FileRead_eof(textstream) == 0) {
-        FileRead_gets(text[s], 256, textstream);
+        FileRead_gets(text[s], sizeof(text[0])-1, textstream);
         accuracy += 1;
         s++;
     }
@@ -155,7 +155,7 @@ void short_writing_practice(string a, int b) {
         DrawString(0, Wy, text[ran], GetColor(255, 255, 255));//써야되는 문장 출력
         start = time(NULL);
         ClearPendingInput();
-        KeyInputString(0, Wy + 20, 300, input, FALSE);//문장 쓰는거 입력
+        KeyInputString(0, Wy + 20, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         int wordsize = strlen(text[ran]);
         for (int i = 0; i < wordsize; i++) {
             if (input[i] != text[ran][i]) {
@@ -198,7 +198,7 @@ void word_practice(int a) {
     int Wy = 0;
     int s = 0;
     while (FileRead_eof(textstream) == 0) {
-        FileRead_gets(text[s], 256, textstream);
+        FileRead_gets(text[s], 128-1, textstream);
         accuracy += 1;
         s++;
     }
@@ -218,7 +218,7 @@ void word_practice(int a) {
         SetFontSize(64);
         DrawString(200, 168, text[ran], GetColor(255, 255, 255));//써야되는 문장 출력
         ClearPendingInput();
-        KeyInputString(200, 232, 300, input, FALSE);//문장 쓰는거 입력
+        KeyInputString(200, 232, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         ClearDrawScreen();
         int wordsize = strlen(text[ran]);
         int wrong = 0;
