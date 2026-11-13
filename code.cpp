@@ -54,6 +54,18 @@ void ClearPendingInput() {
     ClearInputCharBuf();
 }
 
+vector<string> LoadLines(const string& path) {
+    vector<string> lines;
+    int handle = FileRead_open(path.c_str());
+    char buffer[256];
+    while (FileRead_eof(handle) == 0) {
+        FileRead_gets(buffer, sizeof(buffer) - 1, handle);
+        lines.push_back(buffer);
+    }
+    FileRead_close(handle);
+    return lines;
+}
+
 void MoveSelection(int& select, int count) {
     if (Key[KEY_INPUT_DOWN] == 1) select = (select + 1) % count;
     if (Key[KEY_INPUT_UP] == 1) select = (select + count - 1) % count;
@@ -75,24 +87,21 @@ int gpUpdateKey() {
 
 void long_writing_practice(string a) {
     char input[128];
-    int textstream;
     int wrong_count = 0;
     float accuracy = 0;//정확도를 구하는데 필요한 변수
-    char text[128];
     char type_per_min2[128];//2 붙은 것들은 출력을 위해 자료형을 변환시켜준 것들
     char real_accuracy2[128];
     float real_accuracy;
     double type_per_min;
 
-    textstream = FileRead_open(a.c_str());
+    vector<string> lines = LoadLines(a);
     time_t start, end;
     start = time(NULL);
     int Wy = 0;//문장들이 출력되는 위치를 조정하는 변수(y값)
     int roof = 0;//화면 밖으로 넘어가는걸 방지
     int next = 0;//한 화면이 끝난 뒤 계속할지를 정하는 변수
-    while (FileRead_eof(textstream) == 0) {//한줄씩 읽어주기
-        FileRead_gets(text, sizeof(text)-1, textstream);
-        if (roof == 23) {//문장이 화면 밖으로 나가지 않도록 제어해주는 조건문이자 화면의 끝에 도달했을때 결과창을 출력해주는 조건문
+    for(string line : lines) {
+        if(roof == 23){
             ClearDrawScreen();
             Wy = 0;
             roof = 0;
@@ -115,25 +124,25 @@ void long_writing_practice(string a) {
             start = time(NULL);
             ClearDrawScreen();
             gpUpdateKey();
-            if (Key[KEY_INPUT_ESCAPE] == 1) {
+            if(Key[KEY_INPUT_ESCAPE] == 1){
                 next = 1;
                 break;
             }
-        }//한 페이지 끝났을 때
-        DrawString(0, Wy, text, GetColor(255, 255, 255));//써야되는 문장 출력
+        }
+        DrawString(0, Wy, line.c_str(), GetColor(255, 255, 255));//써야되는 문장 출력
         ClearPendingInput();
         KeyInputString(0, Wy + 20, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
-        int size = strlen(text);
+        int size = (int)line.size();
         accuracy += size;
         for (int i = 0; i < size; i++) {//틀린계수 세기
             if (strlen(input) == 0) {
-                wrong_count += strlen(text);
-                DrawString(0, Wy, text, GetColor(255, 51, 51));
+                wrong_count += size;
+                DrawString(0, Wy, line.c_str(), GetColor(255, 51, 51));
                 break;
             }
-            else if (input[i] != text[i]) {
+            else if (input[i] != line[i]) {
                 wrong_count++;
-                DrawString(0, Wy, text, GetColor(255, 51, 51));
+                DrawString(0, Wy, line.c_str(), GetColor(255, 51, 51));
             }
         }
         Wy += 20;//한줄 출력 후 다음줄로 내리기
@@ -151,47 +160,36 @@ void long_writing_practice(string a) {
     DrawString(220, 265, "type per min: ", GetColor(255, 255, 255));
     sprintf_s(type_per_min2, sizeof(type_per_min2), "%0.2f", type_per_min);
     DrawString(350, 265, type_per_min2, GetColor(255, 255, 255));
-    FileRead_close(textstream);
     if (next == 0) {
         ScreenFlip();
         WaitKey();
     }//계속하기 원하면 그대로 진행하고 종료 원하면 메뉴화면으로 나가기
     gpUpdateKey();
 }
+
 void short_writing_practice(string a, int b) {
     char input[128];
-    int textstream;
-    char text[25][128];//25문장, 각 문장당 128글자까지 가능
     time_t start, end;
-    textstream = FileRead_open(a.c_str());
     int Wy = 0;
-    int s = 0;
-    float accuracy = 0; // 정확도 아님 문장 전체 개수임(변수명에 맞지 않게 사용됨)
     float type_per_min;
-    while (FileRead_eof(textstream) == 0) {
-        FileRead_gets(text[s], sizeof(text[0])-1, textstream);
-        accuracy += 1;
-        s++;
-    }
-    accuracy -= 1;
+    vector<string> lines = LoadLines(a);
     SRand(b);
     for (int j = 0; j < 1; j) {//메인 실행 for문
         float wrong_count = 0;
-        int ran = GetRand(accuracy);//랜덤으로 문장 고르기
-        DrawString(0, Wy, text[ran], GetColor(255, 255, 255));//써야되는 문장 출력
+        int ran = GetRand(lines.size() - 1);//랜덤으로 문장 고르기
+        string target = lines[ran];
+        DrawString(0, Wy, target.c_str(), GetColor(255, 255, 255));//써야되는 문장 출력
         start = time(NULL);
         ClearPendingInput();
         KeyInputString(0, Wy + 20, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
-        int wordsize = strlen(text[ran]);
+        int wordsize = target.size();
         for (int i = 0; i < wordsize; i++) {
-            if (input[i] != text[ran][i]) {
-                wrong_count++;
-            }
+            if (input[i] != target[i]) wrong_count++;
         }
         //타이핑 끝난 시점이니 결과창 도출
         end = time(NULL);
         float real_accuracy = ((wordsize - wrong_count) / wordsize) * 100;//진짜 정확도
-        type_per_min = strlen(text[ran]) * (60 / (double)(end - start));
+        type_per_min = target.size() * (60 / (double)(end - start));
         if (strlen(input) == 0) real_accuracy = 0;
         char real_accuracy2[128];
         ClearDrawScreen();
@@ -205,33 +203,23 @@ void short_writing_practice(string a, int b) {
         DrawString(350, 230, type_per_min2, GetColor(255, 255, 255));
         DrawString(170, 265, "Enter to continue, Esc to escape", GetColor(255, 255, 51));
         ScreenFlip();
-        FileRead_close(textstream);
         WaitKey();
         ClearDrawScreen();
         gpUpdateKey();
         if (Key[KEY_INPUT_ESCAPE] == 1) break;//esc눌러서 메뉴로 나가기
     }
 }
+
 void word_practice(int a) {
     char input[128];
-    int textstream;
     int wrong_count = 0;
-    float accuracy = 0;//전체 단어 개수임 정확도 아님(변수명 잘못 사용)
     int correct = 0;//현재 맞은 개수(실행중 표시해주기 위한)
-    char** text = new char* [250];
-    for (int i = 0; i < 250; i++) text[i] = new char[128];//동적 할당 해주기(250단어, 각각128글자씩 가능)
-    textstream = FileRead_open(resourcePaths.words.c_str());
     int Wy = 0;
-    int s = 0;
-    while (FileRead_eof(textstream) == 0) {
-        FileRead_gets(text[s], 128-1, textstream);
-        accuracy += 1;
-        s++;
-    }
-    accuracy -= 1;
+    vector<string> lines = LoadLines(resourcePaths.words);
     SRand(a);
     for (int j = 0; j < 10; j++) {
-        int ran = GetRand(accuracy);
+        int ran = GetRand(lines.size() - 1);
+        string target = lines[ran];
         char correct2[5];
         char per[5];
         SetFontSize(20);
@@ -242,14 +230,14 @@ void word_practice(int a) {
         DrawString(550, 0, "/", GetColor(255, 255, 51));
         DrawString(560, 0, per, GetColor(153, 203, 255));// 전체/맞은 단어 오른쪽 위에 출력하기
         SetFontSize(64);
-        DrawString(200, 168, text[ran], GetColor(255, 255, 255));//써야되는 문장 출력
+        DrawString(200, 168, target.c_str(), GetColor(255, 255, 255));//써야되는 문장 출력
         ClearPendingInput();
         KeyInputString(200, 232, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         ClearDrawScreen();
-        int wordsize = strlen(text[ran]);
+        int wordsize = target.size();
         int wrong = 0;
         for (int i = 0; i < wordsize; i++) {//틀린 개수 세기(한글자라도 틀리면 틀림)
-            if (input[i] != text[ran][i]) {
+            if (input[i] != target[i]) {
                 wrong++;
                 break;//틀린거 찾으면 바로 break
             }
@@ -272,12 +260,10 @@ void word_practice(int a) {
     DrawString(240, 270, "WrongCount: ", GetColor(255, 51, 51));
     DrawString(360, 270, wrong_count2, GetColor(255, 51, 51));
     ScreenFlip();
-    FileRead_close(textstream);
     WaitKey();
     gpUpdateKey();
-    for (int i = 0; i < 250; i++) delete[] text[i];
-    delete[] text;//동적 할당 해제
 }
+
 void spot_practice(int a) {
     float accuracy = 0;
     SRand(a);
