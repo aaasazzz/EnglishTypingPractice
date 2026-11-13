@@ -5,14 +5,6 @@
 #include <vector>
 using namespace std;
 
-void ClearPendingInput() {
-    while (CheckHitKey(KEY_INPUT_RETURN) != 0) {
-        if (ProcessMessage() != 0) return;
-    }
-    ProcessMessage();
-    ClearInputCharBuf();
-}
-
 struct SpotKey {
     char c;
     int key;
@@ -53,6 +45,19 @@ struct ResourcePaths{
 const ResourcePaths resourcePaths;
 
 int Key[256]; // 키가 눌러진 프레임 수를 저장한다
+
+void ClearPendingInput() {
+    while (CheckHitKey(KEY_INPUT_RETURN) != 0) {
+        if (ProcessMessage() != 0) return;
+    }
+    ProcessMessage();
+    ClearInputCharBuf();
+}
+
+void MoveSelection(int& select, int count) {
+    if (Key[KEY_INPUT_DOWN] == 1) select = (select + 1) % count;
+    if (Key[KEY_INPUT_UP] == 1) select = (select + count - 1) % count;
+}
 
 int gpUpdateKey() {
     char tmpKey[256]; // 현재 키의 입력 상태 저장
@@ -330,6 +335,33 @@ void DrawMenu(vector<string> items, int select){
     }
 }
 
+void long_writing_menu(int notepad, int& select){
+    vector<string> longWritingMenuNames;
+    for(int i = 0; i<resourcePaths.longWriting.size();i++){
+        longWritingMenuNames.push_back(resourcePaths.longWriting[i].title);
+    }
+    longWritingMenuNames.push_back("Back");
+    int itemCnt = longWritingMenuNames.size();
+    while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && gpUpdateKey() == 0){
+        DrawGraph(-270, -100, notepad, TRUE);
+        MoveSelection(select, itemCnt);
+        DrawMenu(longWritingMenuNames, select);
+        if (Key[KEY_INPUT_ESCAPE] == 1){
+            gpUpdateKey();
+            break;
+        }// esc 입력으로 메뉴 화면으로 돌아가기
+        if (Key[KEY_INPUT_RETURN] == 1) {
+            if (select < itemCnt - 1) {
+                ClearDrawScreen();
+                long_writing_practice(resourcePaths.longWriting[select].filePath);
+            }
+            else if (select == itemCnt - 1) {
+                break;
+            }
+        }
+    }
+}
+
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     ChangeWindowMode(TRUE), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);// 기초 설정
     ChangeFont("Comic Sans MS");
@@ -342,12 +374,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && gpUpdateKey() == 0){
         time_t random = time(NULL); //랜덤숫자 시작 위치 결정 (195738201738....로 이루어진 배열중 시작 위치 결정하는식)
         DrawGraph(-270, -100, notepad, TRUE);
-        if (Key[KEY_INPUT_DOWN] == 1){ // 아래 키 눌렀을때 메뉴 제어
-            SelectNum = (SelectNum + 1) % menuCnt;
-        }
-        if (Key[KEY_INPUT_UP] == 1){ // 위 키 눌렀을때 메뉴 제어
-            SelectNum = (SelectNum + menuCnt-1) % menuCnt;
-        }
+        MoveSelection(SelectNum, menuCnt);
         DrawMenu(menuNames, SelectNum);
         SetFontSize(35);
         DrawFormatString(110, 20, GetColor(0, 0, 0), "English Typing Practice");// 타이틀 달기
@@ -385,35 +412,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             }
             else if (SelectNum == 3){// 메뉴 안에 새로운 메뉴(긴글 선택)
                 ClearDrawScreen();
-                vector<string> longWritingMenuNames;
-                for(int i = 0; i < resourcePaths.longWriting.size(); i++){
-                    longWritingMenuNames.push_back(resourcePaths.longWriting[i].title);
-                }
-                longWritingMenuNames.push_back("Back");
-                int itemCnt = longWritingMenuNames.size();
-                while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && gpUpdateKey() == 0){
-                    DrawGraph(-270, -100, notepad, TRUE);
-                    if (Key[KEY_INPUT_DOWN] == 1){
-                        SelectNum2 = (SelectNum2 + 1) % itemCnt;
-                    }
-                    if (Key[KEY_INPUT_UP] == 1){
-                        SelectNum2 = (SelectNum2 + itemCnt-1) % itemCnt;
-                    }// 위 아래 키 눌렀을때 메뉴 제어
-                    DrawMenu(longWritingMenuNames, SelectNum2);
-                    if (Key[KEY_INPUT_ESCAPE] == 1){
-                        gpUpdateKey();
-                        break;
-                    }// esc 입력으로 메뉴 화면으로 돌아가기
-                    if (Key[KEY_INPUT_RETURN] == 1){
-                        if(SelectNum2 < itemCnt-1){
-                            ClearDrawScreen();
-                            long_writing_practice(resourcePaths.longWriting[SelectNum2].filePath);
-                        }
-                        else if(SelectNum2 == itemCnt-1){
-                            break;
-                        }
-                    }
-                }
+                long_writing_menu(notepad, SelectNum2);
             }
             else if (SelectNum == 4){
                 break;
