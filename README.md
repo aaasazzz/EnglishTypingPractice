@@ -64,3 +64,12 @@
 | 세 연습 함수가 각자 파일을 열고 읽고 닫는 코드를 따로 가지고 있음 | 파일을 줄 단위로 읽는 `LoadLines()` 함수로 통일 |
 | 긴 글 연습에서 파일 읽기와 연습 진행이 한 `while`문에 섞여 있음 | `LoadLines()`로 먼저 읽고 `for`문으로 한 줄씩 진행 |
 | 짧은 글, 단어 연습에서 줄 개수를 저장하는 변수명을 `accuracy`로 설정 | 줄 개수는 `lines.size()`로 계산, `accuracy` 변수 제거 |
+
+### PR #7 `refactor/split-files`
+
+| 문제 | 수정 |
+|---|---|
+| 구조체, 전역 변수, 함수, `WinMain`이 `code.cpp` 한 파일에 모두 들어 있음 | 선언은 `typing.h`, 정의는 `typing.cpp`, `WinMain`은 `main.cpp`로 분리 (`code.cpp` → `main.cpp`) |
+| 전역 변수(`Key`, `resourcePaths`)를 헤더에 그대로 두면 여러 파일에서 include할 때 중복 정의됨 | 헤더에는 `extern` 선언만, 정의는 `typing.cpp`에 한 번만 |
+| 헤더에 `using namespace std;`를 두면 include하는 모든 파일로 퍼짐 | 헤더에서는 `std::`를 붙여 쓰고, `using namespace std;`는 `.cpp`에만 |
+| `spot_practice`에서만 쓰는 `SpotKey`, `spotKeyList`가 전역에 노출됨 | 헤더에 넣지 않고 `typing.cpp` 안에만 둠 |
