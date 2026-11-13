@@ -34,7 +34,6 @@ const SpotKey spotKeyList[] = {
     { '9', KEY_INPUT_9, KEY_INPUT_NUMPAD9 }, { '0', KEY_INPUT_0, KEY_INPUT_NUMPAD0 },
 };
 
-
 struct LongText {
     string title;
     string filePath;
@@ -327,13 +326,8 @@ typedef struct {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     ChangeWindowMode(TRUE), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);// 기초 설정
     ChangeFont("Comic Sans MS");
-    MenuElement_t MenuElement[5] = {
-            { 80, 100, "Spot Practice"},
-            { 100, 150, "Word Practice"},
-            { 100, 200, "Short Writing Practice"},
-            { 100, 250, "Long Writing Practice"},
-            { 100, 300, "Exit"},
-    };
+    vector<string> menuNames = { "Spot Practice", "Word Practice", "Short Writing Practice", "Long Writing Practice", "Exit" };
+    int menuCnt = menuNames.size();
     int SelectNum = 0; // 메뉴 선택 번호
     int SelectNum2 = 0; // 긴글연습의 선택 번호
     int screen = 0; // 창모드, 전체화면 상태를 나타내는 정수
@@ -342,24 +336,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         time_t random = time(NULL); //랜덤숫자 시작 위치 결정 (195738201738....로 이루어진 배열중 시작 위치 결정하는식)
         DrawGraph(-270, -100, notepad, TRUE);
         if (Key[KEY_INPUT_DOWN] == 1){ // 아래 키 눌렀을때 메뉴 제어
-            SelectNum = (SelectNum + 1) % 5;
+            SelectNum = (SelectNum + 1) % menuCnt;
         }
         if (Key[KEY_INPUT_UP] == 1){ // 위 키 눌렀을때 메뉴 제어
-            SelectNum = (SelectNum + 4) % 5;
+            SelectNum = (SelectNum + menuCnt-1) % menuCnt;
         }
-        if (Key[KEY_INPUT_DOWN] == 1 || Key[KEY_INPUT_UP] == 1){
-            for (int i = 0; i < 5; i++){
-                if (i == SelectNum){
-                    MenuElement[i].x = 80; // 선택된 메뉴의 x좌표를 80으로 설정(글 자체가 조금 뒤로 가서 마치 위로 떠있는 듯한 느낌을 줌)
-                }
-                else{
-                    MenuElement[i].x = 100;
-                }
-            }
-        }
-        for (int i = 0; i < 5; i++){ // 메뉴 그리기
-
-            DrawFormatString(MenuElement[i].x, MenuElement[i].y, GetColor(0, 0, 0), MenuElement[i].name);
+        for(int i = 0;i<menuCnt;i++){
+            int x;
+            if(i == SelectNum) x = 80;
+            else x = 100;
+            int y = 100 + i * 50;
+            DrawFormatString(x, y, GetColor(0, 0, 0), menuNames[i].c_str());
         }
         SetFontSize(35);
         DrawFormatString(110, 20, GetColor(0, 0, 0), "English Typing Practice");// 타이틀 달기
@@ -397,10 +384,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             }
             else if (SelectNum == 3){// 메뉴 안에 새로운 메뉴(긴글 선택)
                 ClearDrawScreen();
-                int item_cnt = resourcePaths.longWriting.size() + 1; // 메뉴 항목 개수
-                vector<MenuElement_t> MenuElement2(item_cnt);
-                for (int i = 0; i < item_cnt; i++){
-                    if(i == item_cnt-1){
+                int itemCnt = resourcePaths.longWriting.size() + 1; // 메뉴 항목 개수
+                vector<MenuElement_t> MenuElement2(itemCnt);
+                for (int i = 0; i < itemCnt; i++){
+                    if(i == itemCnt-1){
                         MenuElement2[i].x = 100;
                         MenuElement2[i].y = 100 + i * 50;
                         strcpy_s(MenuElement2[i].name, "Back");
@@ -414,13 +401,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && gpUpdateKey() == 0){
                     DrawGraph(-270, -100, notepad, TRUE);
                     if (Key[KEY_INPUT_DOWN] == 1){
-                        SelectNum2 = (SelectNum2 + 1) % item_cnt;
+                        SelectNum2 = (SelectNum2 + 1) % itemCnt;
                     }
                     if (Key[KEY_INPUT_UP] == 1){
-                        SelectNum2 = (SelectNum2 + item_cnt-1) % item_cnt;
+                        SelectNum2 = (SelectNum2 + itemCnt-1) % itemCnt;
                     }// 위 아래 키 눌렀을때 메뉴 제어
                     if (Key[KEY_INPUT_DOWN] == 1 || Key[KEY_INPUT_UP] == 1){
-                        for (int i = 0; i < item_cnt; i++){
+                        for (int i = 0; i < itemCnt; i++){
                             if (i == SelectNum2){
                                 MenuElement2[i].x = 80; // 선택된 메뉴의 x좌표를 80으로 설정(글 자체가 조금 뒤로 가서 마치 위로 떠있는 듯한 느낌을 줌)
                             }
@@ -429,7 +416,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                             }
                         }
                     }
-                    for (int i = 0; i < item_cnt; i++){ // 메뉴 그리기
+                    for (int i = 0; i < itemCnt; i++){ // 메뉴 그리기
                         DrawFormatString(MenuElement2[i].x, MenuElement2[i].y, GetColor(0, 0, 0), MenuElement2[i].name);
                     }
                     if (Key[KEY_INPUT_ESCAPE] == 1){
@@ -437,11 +424,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                         break;
                     }// esc 입력으로 메뉴 화면으로 돌아가기
                     if (Key[KEY_INPUT_RETURN] == 1){
-                        if(SelectNum2 < item_cnt-1){
+                        if(SelectNum2 < itemCnt-1){
                             ClearDrawScreen();
                             long_writing_practice(resourcePaths.longWriting[SelectNum2].filePath);
                         }
-                        else if(SelectNum2 == item_cnt-1){
+                        else if(SelectNum2 == itemCnt-1){
                             break;
                         }
                     }
