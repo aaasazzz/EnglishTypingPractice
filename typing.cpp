@@ -296,7 +296,7 @@ void DrawMenu(vector<string> items, int select){
         if(i == select) x = 80;
         else x = 100;
         int y = 100 + i * 50;
-        DrawFormatString(x, y, GetColor(0, 0, 0), items[i].c_str());
+        DrawString(x, y, items[i].c_str(), GetColor(0, 0, 0));
     }
 }
 
