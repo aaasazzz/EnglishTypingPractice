@@ -74,8 +74,8 @@ void long_writing_practice(string a) {
     double type_per_min;
 
     vector<string> lines = LoadLines(a);
-    time_t start, end;
-    start = time(NULL);
+    int start, end;
+    start = GetNowCount();
     int Wy = 0;//문장들이 출력되는 위치를 조정하는 변수(y값)
     int roof = 0;//화면 밖으로 넘어가는걸 방지
     int next = 0;//한 화면이 끝난 뒤 계속할지를 정하는 변수
@@ -84,9 +84,10 @@ void long_writing_practice(string a) {
             ClearDrawScreen();
             Wy = 0;
             roof = 0;
-            end = time(NULL);
-            type_per_min = accuracy * (60 / (double)(end - start));
+            end = GetNowCount();
+            type_per_min = accuracy * (60000.0 / (double)(end - start));
             real_accuracy = ((accuracy - wrong_count) / accuracy) * 100;
+            if(real_accuracy < 0) real_accuracy = 0;
             sprintf_s(real_accuracy2, sizeof(real_accuracy2), "%0.2f", real_accuracy);
             DrawString(220, 195, "accuracy: ", GetColor(255, 255, 255));
             DrawString(320, 195, real_accuracy2, GetColor(255, 255, 255));
@@ -100,7 +101,7 @@ void long_writing_practice(string a) {
             wrong_count = 0;
             ScreenFlip();
             WaitKey();
-            start = time(NULL);
+            start = GetNowCount();
             ClearDrawScreen();
             gpUpdateKey();
             if(Key[KEY_INPUT_ESCAPE] == 1){
@@ -112,25 +113,23 @@ void long_writing_practice(string a) {
         ClearPendingInput();
         KeyInputString(0, Wy + 20, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         int size = (int)line.size();
+        int inputsize = (int)strlen(input);
         accuracy += size;
-        for (int i = 0; i < size; i++) {//틀린계수 세기
-            if (strlen(input) == 0) {
-                wrong_count += size;
-                DrawString(0, Wy, line.c_str(), GetColor(255, 51, 51));
-                break;
-            }
-            else if (input[i] != line[i]) {
-                wrong_count++;
-                DrawString(0, Wy, line.c_str(), GetColor(255, 51, 51));
-            }
+        int lineWrong = 0;
+        for(int i = 0;i<size;i++) {//틀린계수 세기
+            if(i >= inputsize || input[i] != line[i]) lineWrong++;
         }
+        if(inputsize > size) lineWrong += inputsize - size;
+        wrong_count += lineWrong;
+        if(lineWrong > 0) DrawString(0, Wy, line.c_str(), GetColor(255, 51, 51));
         Wy += 20;//한줄 출력 후 다음줄로 내리기
         roof++;
     }
-    end = time(NULL);
-    type_per_min = accuracy * (60 / (double)(end - start));
+    end = GetNowCount();
+    type_per_min = accuracy * (60000.0 / (double)(end - start));
     //타이핑 끝난 시점이니 결과창 도출
     real_accuracy = ((accuracy - wrong_count) / accuracy) * 100;
+    if(real_accuracy < 0) real_accuracy = 0;
     ClearDrawScreen();
     sprintf_s(real_accuracy2, sizeof(real_accuracy2), "%0.2f", real_accuracy);
     DrawString(220, 230, "accuracy: ", GetColor(255, 255, 255));
@@ -148,7 +147,7 @@ void long_writing_practice(string a) {
 
 void short_writing_practice(string a, int b) {
     char input[128];
-    time_t start, end;
+    int start, end;
     int Wy = 0;
     float type_per_min;
     vector<string> lines = LoadLines(a);
@@ -158,18 +157,21 @@ void short_writing_practice(string a, int b) {
         int ran = GetRand(lines.size() - 1);//랜덤으로 문장 고르기
         string target = lines[ran];
         DrawString(0, Wy, target.c_str(), GetColor(255, 255, 255));//써야되는 문장 출력
-        start = time(NULL);
+        start = GetNowCount();
         ClearPendingInput();
         KeyInputString(0, Wy + 20, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         int wordsize = target.size();
-        for (int i = 0; i < wordsize; i++) {
-            if (input[i] != target[i]) wrong_count++;
+        int inputsize = (int)strlen(input);
+
+        for(int i = 0; i<wordsize;i++){
+            if(i >= inputsize || input[i] != target[i]) wrong_count++;
         }
+        if(inputsize > wordsize) wrong_count += inputsize - wordsize;
         //타이핑 끝난 시점이니 결과창 도출
-        end = time(NULL);
+        end = GetNowCount();
         float real_accuracy = ((wordsize - wrong_count) / wordsize) * 100;//진짜 정확도
-        type_per_min = target.size() * (60 / (double)(end - start));
-        if (strlen(input) == 0) real_accuracy = 0;
+        type_per_min = target.size() * (60000.0 / (double)(end - start));
+        if(real_accuracy < 0) real_accuracy = 0;
         char real_accuracy2[128];
         ClearDrawScreen();
         sprintf_s(real_accuracy2, sizeof(real_accuracy2), "%0.2f", real_accuracy);
@@ -213,15 +215,7 @@ void word_practice(int a) {
         ClearPendingInput();
         KeyInputString(200, 232, sizeof(input)-1, input, FALSE);//문장 쓰는거 입력
         ClearDrawScreen();
-        int wordsize = target.size();
-        int wrong = 0;
-        for (int i = 0; i < wordsize; i++) {//틀린 개수 세기(한글자라도 틀리면 틀림)
-            if (input[i] != target[i]) {
-                wrong++;
-                break;//틀린거 찾으면 바로 break
-            }
-        }
-        if (wrong != 0) wrong_count += 1;
+        if(target != input) wrong_count += 1;
         else correct++;
         Wy += 20;
     }//반복 횟수 조절로 정확도 체크까지 걸리는 반복수 조절
@@ -296,7 +290,7 @@ void DrawMenu(vector<string> items, int select){
         if(i == select) x = 80;
         else x = 100;
         int y = 100 + i * 50;
-        DrawFormatString(x, y, GetColor(0, 0, 0), items[i].c_str());
+        DrawString(x, y, items[i].c_str(), GetColor(0, 0, 0));
     }
 }
 

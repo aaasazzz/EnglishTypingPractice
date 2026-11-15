@@ -16,7 +16,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         MoveSelection(SelectNum, menuCnt);
         DrawMenu(menuNames, SelectNum);
         SetFontSize(35);
-        DrawFormatString(110, 20, GetColor(0, 0, 0), "English Typing Practice");// 타이틀 달기
+        DrawString(110, 20, "English Typing Practice", GetColor(0, 0, 0));// 타이틀 달기
         SetFontSize(17);
         if (screen == 0 && Key[KEY_INPUT_ESCAPE] == 1) { // esc 입력시 프로그램 종료(창모드일때)
             gpUpdateKey();
