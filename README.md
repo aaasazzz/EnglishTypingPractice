@@ -5,7 +5,9 @@
 
 - 메뉴: Spot Practice(글자), Word Practice(단어), Short Writing Practice(문장), Long Writing Practice(긴 글)
 - 조작: 위/아래 키로 메뉴 이동, Enter 선택, F11 전체화면, ESC 창모드 / 종료
-- 실행: Windows + Visual Studio + [DxLib](https://dxlib.xsrv.jp/), `resources` 폴더를 실행 폴더에 둔다.
+- 실행: Windows + Visual Studio + [DxLib](https://dxlib.xsrv.jp/)
+  1. DxLib 설정이 된 Visual Studio 프로젝트에 `main.cpp`, `typing.cpp`, `typing.h`를 추가
+  2. `resources` 폴더를 실행 폴더(exe가 실행되는 작업 폴더)에 둔다
 
 ## 수정 내역
 
